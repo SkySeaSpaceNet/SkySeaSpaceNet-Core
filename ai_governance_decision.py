@@ -28,11 +28,28 @@ def process_governance_decisions(recommendations):
 
 def evaluate_and_approve_actions(recommendation):
     approved_actions = []
+    risk_weights = {
+        'uaps': 0.9,
+        'usos': 0.85,
+        'aircraft': 0.6,
+        'satellites': 0.7,
+        'space_debris': 0.5
+    }
+    
     for action in recommendation.get('actions', []):
-        if validate_action_safety(action):
+        weighted_risk = recommendation['threat_score'] * risk_weights.get(recommendation['category'], 0.5)
+        if validate_action_safety(action) and weighted_risk < 0.8:
             approved_actions.append({
                 'action': action,
                 'approval_status': 'approved',
+                'risk_score': weighted_risk,
+                'timestamp': datetime.now().isoformat()
+            })
+        else:
+            approved_actions.append({
+                'action': action,
+                'approval_status': 'requires_human_review',
+                'risk_score': weighted_risk,
                 'timestamp': datetime.now().isoformat()
             })
     return approved_actions
