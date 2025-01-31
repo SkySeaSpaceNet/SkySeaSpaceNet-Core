@@ -68,6 +68,24 @@ def classify_objects(data):
                     'type': 'unidentified',
                     'confidence': 0.75
                 })
+            elif source == 'Radar':
+                # Classify potential UAPs based on unusual characteristics
+                if (obj.get('velocity', 0) > 50000 and 
+                    obj.get('acceleration', 0) > 100 and 
+                    obj.get('signature') == 'anomalous'):
+                    classified['uaps'].append({
+                        'id': obj.get('id'),
+                        'type': 'high_speed_anomaly',
+                        'confidence': 0.80
+                    })
+                # Classify space debris
+                elif (obj.get('size', 0) < 1 and 
+                      obj.get('altitude', 0) > 100000):
+                    classified['space_debris'].append({
+                        'id': obj.get('id'),
+                        'type': 'orbital_debris',
+                        'confidence': 0.90
+                    })
                 
     return classified
 
