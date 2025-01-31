@@ -1,0 +1,21 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+logs/
+*.log
+
+# Generated data
+*.json
+!tasks.json
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
