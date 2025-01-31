@@ -86,6 +86,14 @@ def main():
             try:
                 with open('governance_recommendations.json', 'r') as f:
                     recommendations = json.load(f)
+            except FileNotFoundError:
+                recommendations = {
+                    "timestamp": datetime.now().isoformat(),
+                    "policy_recommendations": [],
+                    "metadata": {"framework": "transparent_ai_governance", "version": "1.0"}
+                }
+                with open('governance_recommendations.json', 'w') as f:
+                    json.dump(recommendations, f, indent=2)
 
 def validate_autonomous_decision(recommendation):
     safety_conditions = [
