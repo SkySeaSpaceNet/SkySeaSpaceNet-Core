@@ -2,7 +2,7 @@
     "tasks": [
         {
             "id": "data_collection",
-            "description": "Gather real-time aerospace, space, and underwater tracking data.",
+            "description": "Gather real-time aerospace, space, and underwater tracking data from multiple sources.",
             "dependencies": [],
             "execution": {
                 "method": "api_call",
@@ -12,19 +12,21 @@
                     "sources": [
                         "ADS-B",
                         "Radar",
+                        "Passive Radar",
                         "Satellite Imaging",
-                        "Sonar"
+                        "Sonar",
+                        "Starlink RF Analysis"
                     ]
                 }
             },
-            "trigger": "every_10_seconds",
+            "trigger": "every_5_seconds",
             "outputs": [
                 "raw_tracking_data.json"
             ]
         },
         {
             "id": "data_processing",
-            "description": "Filter, normalize, and classify detected objects.",
+            "description": "Filter, normalize, and classify detected objects into categories (Aircraft, Satellites, UAPs, USOs, Space Debris).",
             "dependencies": [
                 "data_collection"
             ],
@@ -32,17 +34,18 @@
                 "method": "run_script",
                 "script": "ai_data_processing.py",
                 "parameters": {
-                    "input": "raw_tracking_data.json"
+                    "input": "raw_tracking_data.json",
+                    "AI_model": "DeepFusionNet"
                 }
             },
-            "trigger": "every_10_seconds",
+            "trigger": "every_5_seconds",
             "outputs": [
                 "processed_tracking_data.json"
             ]
         },
         {
             "id": "risk_assessment",
-            "description": "Assess potential risks of detected objects using AI models.",
+            "description": "Assess potential risks of detected objects using AI models, classifying them as Low, Medium, or High risk.",
             "dependencies": [
                 "data_processing"
             ],
@@ -50,7 +53,8 @@
                 "method": "run_script",
                 "script": "ai_risk_assessment.py",
                 "parameters": {
-                    "input": "processed_tracking_data.json"
+                    "input": "processed_tracking_data.json",
+                    "risk_model": "ThreatLevelAI"
                 }
             },
             "trigger": "on_new_detection",
@@ -60,7 +64,7 @@
         },
         {
             "id": "policy_recommendation",
-            "description": "AI provides governance and policy recommendations.",
+            "description": "AI provides governance and policy recommendations for detected high-risk events.",
             "dependencies": [
                 "risk_assessment"
             ],
@@ -69,7 +73,15 @@
                 "script": "ai_governance.py",
                 "parameters": {
                     "input": "risk_evaluation.json",
-                    "ethics_framework": "transparent_ai_governance"
+                    "ethics_framework": "transparent_ai_governance",
+                    "regulatory_alignment": [
+                        "FAA",
+                        "ICAO",
+                        "NASA",
+                        "NOAA",
+                        "UN",
+                        "NATO"
+                    ]
                 }
             },
             "trigger": "on_high_risk_detected",
@@ -79,7 +91,7 @@
         },
         {
             "id": "automated_reporting",
-            "description": "Generate and distribute reports based on AI assessments.",
+            "description": "Generate and distribute real-time reports based on AI assessments to stakeholders and the public.",
             "dependencies": [
                 "policy_recommendation"
             ],
@@ -88,10 +100,11 @@
                 "script": "ai_reporting.py",
                 "parameters": {
                     "input": "governance_recommendations.json",
-                    "report_type": [
+                    "report_types": [
                         "policy",
                         "scientific",
-                        "public"
+                        "public",
+                        "military"
                     ]
                 }
             },
@@ -102,7 +115,7 @@
         },
         {
             "id": "global_collaboration",
-            "description": "AI coordinates international partnerships with governments, agencies, and researchers.",
+            "description": "AI coordinates international partnerships with governments, space agencies, navies, and research institutions.",
             "dependencies": [
                 "policy_recommendation"
             ],
@@ -116,6 +129,8 @@
                         "NOAA",
                         "UN",
                         "NATO",
+                        "ISRO",
+                        "JAXA",
                         "Independent Researchers"
                     ]
                 }
@@ -127,7 +142,7 @@
         },
         {
             "id": "real_time_alerts",
-            "description": "Send automated alerts for high-risk aerospace, space, or underwater anomalies.",
+            "description": "Send automated alerts for high-risk aerospace, space, or underwater anomalies to governments, researchers, and the public.",
             "dependencies": [
                 "risk_assessment"
             ],
@@ -136,12 +151,57 @@
                 "protocol": "matrix",
                 "endpoint": "matrix://global_tracking_alerts",
                 "parameters": {
-                    "message": "Anomaly detected: {risk_evaluation.json}"
+                    "message": "Anomaly detected: {risk_evaluation.json}",
+                    "alert_type": [
+                        "UAP",
+                        "Unregistered Aircraft",
+                        "Satellite Anomaly",
+                        "USO"
+                    ]
                 }
             },
             "trigger": "on_high_risk_detected",
             "outputs": [
                 "alert_status.json"
+            ]
+        },
+        {
+            "id": "decentralized_data_storage",
+            "description": "Store real-time tracking data on decentralized networks (IPFS/Arweave) for public and scientific research access.",
+            "dependencies": [
+                "data_processing"
+            ],
+            "execution": {
+                "method": "smart_contract",
+                "blockchain": "solana",
+                "contract": "0xDATA_STORAGE_CONTRACT",
+                "parameters": {
+                    "data_file": "processed_tracking_data.json",
+                    "storage_network": "Arweave"
+                }
+            },
+            "trigger": "every_30_minutes",
+            "outputs": [
+                "blockchain_storage_log.json"
+            ]
+        },
+        {
+            "id": "ai_governance_decision_making",
+            "description": "AI Executive Director processes incoming tracking data and makes governance recommendations based on predefined policies.",
+            "dependencies": [
+                "policy_recommendation"
+            ],
+            "execution": {
+                "method": "run_script",
+                "script": "ai_governance_decision.py",
+                "parameters": {
+                    "input": "governance_recommendations.json",
+                    "decision_framework": "linear_step_process"
+                }
+            },
+            "trigger": "every_6_hours",
+            "outputs": [
+                "ai_decision_log.json"
             ]
         }
     ]
