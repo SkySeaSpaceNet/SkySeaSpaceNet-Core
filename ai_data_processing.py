@@ -40,15 +40,36 @@ def process_tracking_data(input_file):
         return False
 
 def classify_objects(data):
-    # Placeholder for DeepFusionNet AI classification
-    # In real implementation, this would use ML models
-    return {
+    classified = {
         'aircraft': [],
         'satellites': [],
         'uaps': [],
         'usos': [],
         'space_debris': []
     }
+    
+    for source, objects in data['sources'].items():
+        for obj in objects:
+            if source == 'ADS-B':
+                classified['aircraft'].append({
+                    'id': obj.get('id'),
+                    'type': 'commercial_aircraft',
+                    'confidence': 0.95
+                })
+            elif source == 'Radar' and obj.get('velocity', 0) > 20000:
+                classified['satellites'].append({
+                    'id': obj.get('id'),
+                    'type': 'orbital_object',
+                    'confidence': 0.85
+                })
+            elif source == 'Sonar' and obj.get('signature') == 'unknown':
+                classified['usos'].append({
+                    'id': obj.get('id'),
+                    'type': 'unidentified',
+                    'confidence': 0.75
+                })
+                
+    return classified
 
 if __name__ == "__main__":
     while True:
