@@ -55,8 +55,17 @@ def generate_decision_rationale(recommendation):
 def main():
     while True:
         try:
-            with open('governance_recommendations.json', 'r') as f:
-                recommendations = json.load(f)
+            try:
+                with open('governance_recommendations.json', 'r') as f:
+                    recommendations = json.load(f)
+            except FileNotFoundError:
+                recommendations = {
+                    "timestamp": datetime.now().isoformat(),
+                    "policy_recommendations": [],
+                    "metadata": {"framework": "transparent_ai_governance", "version": "1.0"}
+                }
+                with open('governance_recommendations.json', 'w') as f:
+                    json.dump(recommendations, f, indent=2)
             
             decisions = process_governance_decisions(recommendations)
             

@@ -44,8 +44,17 @@ def generate_policy_recommendation(risk_assessment):
 
 def main():
     try:
-        with open('risk_evaluation.json', 'r') as f:
-            risk_data = json.load(f)
+        try:
+            with open('risk_evaluation.json', 'r') as f:
+                risk_data = json.load(f)
+        except FileNotFoundError:
+            risk_data = {
+                "timestamp": datetime.now().isoformat(),
+                "assessments": [],
+                "metadata": {"model": "ThreatLevelAI", "version": "1.0"}
+            }
+            with open('risk_evaluation.json', 'w') as f:
+                json.dump(risk_data, f, indent=2)
         
         recommendations = analyze_risks_and_make_recommendations(risk_data)
         
