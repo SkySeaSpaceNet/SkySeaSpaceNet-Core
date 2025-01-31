@@ -1,4 +1,4 @@
-run = "python ai_data_processing.py"
+run = "python main.py"
 modules = ["python-3.11"]
 [nix]
 channel = "stable-24_05"
