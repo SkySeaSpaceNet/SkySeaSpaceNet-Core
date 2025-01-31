@@ -40,7 +40,7 @@ def process_tracking_data(input_file):
         return True
     except Exception as e:
         logger = setup_logger('data_processing')
-logger.error(f"Error processing data: {e}")
+        logger.error(f"Error processing data: {e}")
         return False
 
 def classify_objects(data):
