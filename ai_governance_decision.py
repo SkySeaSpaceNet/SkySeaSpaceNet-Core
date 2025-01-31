@@ -1,4 +1,3 @@
-
 import json
 import time
 from datetime import datetime
@@ -12,7 +11,7 @@ def process_governance_decisions(recommendations):
             'version': '2.0'
         }
     }
-    
+
     for rec in recommendations.get('policy_recommendations', []):
         if validate_autonomous_decision(rec):
             decision = {
@@ -34,7 +33,7 @@ def process_governance_decisions(recommendations):
                 'decision_rationale': 'Autonomous decision validation failed'
             }
         decisions['decisions'].append(decision)
-    
+
     return decisions
 
 def evaluate_and_approve_actions(recommendation):
@@ -46,7 +45,7 @@ def evaluate_and_approve_actions(recommendation):
         'satellites': 0.7,
         'space_debris': 0.5
     }
-    
+
     for action in recommendation.get('actions', []):
         weighted_risk = recommendation['threat_score'] * risk_weights.get(recommendation['category'], 0.5)
         if validate_action_safety(action) and weighted_risk < 0.8:
@@ -66,7 +65,6 @@ def evaluate_and_approve_actions(recommendation):
     return approved_actions
 
 def validate_action_safety(action):
-    # Implement safety checks based on predefined rules
     unsafe_keywords = ['override', 'disable', 'shutdown', 'weapon']
     return not any(keyword in action.lower() for keyword in unsafe_keywords)
 
@@ -79,21 +77,6 @@ def generate_decision_rationale(recommendation):
         'space_debris': 'Orbital debris mitigation protocol'
     }
     return category_rationales.get(recommendation['category'], 'Standard protocol implementation')
-
-def main():
-    while True:
-        try:
-            try:
-                with open('governance_recommendations.json', 'r') as f:
-                    recommendations = json.load(f)
-            except FileNotFoundError:
-                recommendations = {
-                    "timestamp": datetime.now().isoformat(),
-                    "policy_recommendations": [],
-                    "metadata": {"framework": "transparent_ai_governance", "version": "1.0"}
-                }
-                with open('governance_recommendations.json', 'w') as f:
-                    json.dump(recommendations, f, indent=2)
 
 def validate_autonomous_decision(recommendation):
     safety_conditions = [
@@ -115,23 +98,20 @@ def execute_approved_actions(decision):
     except Exception as e:
         print(f"Error executing autonomous action: {e}")
 
-            except FileNotFoundError:
-                recommendations = {
-                    "timestamp": datetime.now().isoformat(),
-                    "policy_recommendations": [],
-                    "metadata": {"framework": "transparent_ai_governance", "version": "1.0"}
-                }
-                with open('governance_recommendations.json', 'w') as f:
-                    json.dump(recommendations, f, indent=2)
-            
+def main():
+    while True:
+        try:
+            with open('governance_recommendations.json', 'r') as f:
+                recommendations = json.load(f)
+
             decisions = process_governance_decisions(recommendations)
-            
+
             with open('ai_decision_log.json', 'w') as f:
                 json.dump(decisions, f, indent=2)
-                
+
         except Exception as e:
             print(f"Error in decision processing: {e}")
-            
+
         time.sleep(21600)  # Run every 6 hours as per tasks.json
 
 if __name__ == "__main__":
