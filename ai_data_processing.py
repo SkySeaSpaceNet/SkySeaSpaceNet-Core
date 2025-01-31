@@ -2,6 +2,9 @@
 import json
 import time
 from datetime import datetime
+from logger import setup_logger
+
+logger = setup_logger('data_processing')
 
 def process_tracking_data(input_file):
     try:
@@ -36,7 +39,8 @@ def process_tracking_data(input_file):
             
         return True
     except Exception as e:
-        print(f"Error processing data: {e}")
+        logger = setup_logger('data_processing')
+logger.error(f"Error processing data: {e}")
         return False
 
 def classify_objects(data):
