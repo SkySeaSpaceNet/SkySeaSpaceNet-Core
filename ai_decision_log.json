@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-01-31T02:39:09.781336",
+  "timestamp": "2025-01-31T02:41:05.204113",
   "decisions": [],
   "metadata": {
-    "framework": "linear_step_process",
-    "version": "1.0"
+    "framework": "autonomous_governance",
+    "version": "2.0"
   }
 }
