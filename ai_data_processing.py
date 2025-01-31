@@ -5,8 +5,22 @@ from datetime import datetime
 
 def process_tracking_data(input_file):
     try:
-        with open(input_file, 'r') as f:
-            raw_data = json.load(f)
+        try:
+            with open(input_file, 'r') as f:
+                raw_data = json.load(f)
+        except FileNotFoundError:
+            # Create placeholder data if file doesn't exist
+            raw_data = {
+                "timestamp": datetime.now().isoformat(),
+                "sources": {
+                    "ADS-B": [],
+                    "Radar": [],
+                    "Satellite": [],
+                    "Sonar": []
+                }
+            }
+            with open(input_file, 'w') as f:
+                json.dump(raw_data, f, indent=2)
         
         processed_data = {
             'timestamp': datetime.now().isoformat(),
