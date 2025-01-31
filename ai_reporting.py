@@ -1,5 +1,4 @@
 import json
-import time
 from datetime import datetime
 
 def generate_reports(governance_data):
@@ -7,82 +6,120 @@ def generate_reports(governance_data):
         'timestamp': datetime.now().isoformat(),
         'reports': [],
         'metadata': {
-            'report_system': 'ai_executive',
+            'report_system': 'unified_transparency',
             'version': '1.0'
         }
     }
 
-    report_types = {
-        'policy': generate_policy_report,
-        'scientific': generate_scientific_report,
-        'public': generate_public_report,
-        'military': generate_military_report
-    }
-
-    for report_type, generator in report_types.items():
-        report = generator(governance_data)
-        reports['reports'].append(report)
+    for recommendation in governance_data.get('policy_recommendations', []):
+        reports['reports'].extend([
+            generate_policy_report(recommendation),
+            generate_scientific_report(recommendation),
+            generate_public_report(recommendation),
+            generate_military_report(recommendation)
+        ])
 
     return reports
 
 def generate_policy_report(data):
     return {
         'type': 'policy',
-        'title': 'Policy Implications Report',
-        'recommendations': [rec for rec in data.get('policy_recommendations', [])],
-        'classification': 'official_use'
+        'object_id': data['object_id'],
+        'timestamp': datetime.now().isoformat(),
+        'content': {
+            'category': data['category'],
+            'threat_level': data['threat_score'],
+            'recommended_actions': data['actions'],
+            'policy_implications': get_policy_implications(data['category'])
+        }
     }
 
 def generate_scientific_report(data):
     return {
         'type': 'scientific',
-        'title': 'Scientific Analysis Report',
-        'findings': extract_scientific_data(data),
-        'classification': 'public'
+        'object_id': data['object_id'],
+        'timestamp': datetime.now().isoformat(),
+        'content': {
+            'observation_type': data['category'],
+            'confidence_score': data['threat_score'],
+            'technical_details': get_technical_details(data),
+            'research_recommendations': get_research_recommendations(data['category'])
+        }
     }
 
 def generate_public_report(data):
     return {
         'type': 'public',
-        'title': 'Public Information Report',
-        'summary': create_public_summary(data),
-        'classification': 'public'
+        'object_id': data['object_id'],
+        'timestamp': datetime.now().isoformat(),
+        'content': {
+            'summary': get_public_summary(data),
+            'safety_status': 'monitoring' if data['threat_score'] < 0.7 else 'under_investigation',
+            'public_advisory': get_public_advisory(data['category'])
+        }
     }
 
 def generate_military_report(data):
     return {
         'type': 'military',
-        'title': 'Defense Assessment Report',
-        'threat_analysis': create_threat_analysis(data),
-        'classification': 'classified'
+        'object_id': data['object_id'],
+        'timestamp': datetime.now().isoformat(),
+        'content': {
+            'threat_assessment': data['threat_score'],
+            'recommended_actions': data['actions'],
+            'strategic_implications': get_strategic_implications(data['category'])
+        }
     }
 
-def extract_scientific_data(data):
-    scientific_data = []
-    for rec in data.get('policy_recommendations', []):
-        if rec.get('category') in ['uaps', 'usos', 'satellites']:
-            scientific_data.append({
-                'object_id': rec.get('object_id'),
-                'category': rec.get('category'),
-                'observations': rec.get('actions', [])
-            })
-    return scientific_data
+def get_policy_implications(category):
+    implications = {
+        'uaps': 'Review of aerospace defense protocols',
+        'usos': 'Maritime security policy evaluation',
+        'aircraft': 'Aviation regulation compliance',
+        'satellites': 'Space traffic management',
+        'space_debris': 'Orbital cleanup initiatives'
+    }
+    return implications.get(category, 'Standard protocol review')
 
-def create_public_summary(data):
+def get_technical_details(data):
     return {
-        'total_observations': len(data.get('policy_recommendations', [])),
-        'categories': list(set(rec.get('category') for rec in data.get('policy_recommendations', []))),
-        'date': datetime.now().strftime('%Y-%m-%d')
+        'observation_method': 'Multi-sensor fusion',
+        'data_reliability': data['threat_score'],
+        'analysis_methodology': 'AI-assisted pattern recognition'
     }
 
-def create_threat_analysis(data):
-    return {
-        'high_priority_threats': [
-            rec for rec in data.get('policy_recommendations', [])
-            if rec.get('threat_score', 0) > 0.7
-        ],
-        'response_status': 'active'
+def get_research_recommendations(category):
+    recommendations = {
+        'uaps': 'Advanced sensor deployment and data analysis',
+        'usos': 'Deep-sea monitoring system enhancement',
+        'aircraft': 'Tracking system optimization',
+        'satellites': 'Space-based observation upgrade',
+        'space_debris': 'Debris tracking technology development'
     }
+    return recommendations.get(category, 'Continue standard observation')
+
+def get_public_summary(data):
+    return f"Monitoring ongoing for {data['category']} event with standard safety protocols in place."
+
+def get_public_advisory(category):
+    advisories = {
+        'uaps': 'No public safety concern. Continuing observation.',
+        'usos': 'Maritime activity normal. Research ongoing.',
+        'aircraft': 'Regular aviation monitoring in effect.',
+        'satellites': 'Space activities proceeding normally.',
+        'space_debris': 'Space traffic management active.'
+    }
+    return advisories.get(category, 'Standard monitoring in effect')
+
+def get_strategic_implications(category):
+    implications = {
+        'uaps': 'Aerospace defense readiness assessment',
+        'usos': 'Maritime domain awareness update',
+        'aircraft': 'Air defense posture evaluation',
+        'satellites': 'Space asset protection review',
+        'space_debris': 'Orbital hazard mitigation'
+    }
+    return implications.get(category, 'Standard protocol maintenance')
 
 def main():
     while True:
